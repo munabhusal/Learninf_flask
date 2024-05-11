@@ -14,8 +14,12 @@ def user_addone_controller():
 
 @app.route('/user/update', methods = ['PUT'])
 def user_update_controller():
-    print(request.form)
+    # print(request.form)
     return object.user_update(request.form)
+
+@app.route('/user/update/patch/<id>', methods = ['PATCH'])
+def user_update_patch_controller(id):
+    return object.user_patch(request.form , id)
 
 @app.route('/user/delete/<id>', methods = ['DELETE'])
 def user_delete_controller(id):

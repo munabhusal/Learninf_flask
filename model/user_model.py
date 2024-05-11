@@ -49,9 +49,21 @@ class user_model():
         self.cur.execute(f"UPDATE uses SET name= '{data['name']}' , email='{data['email']}' , phone='{data['phone']}', role='{data['role']}' ,password='{data['password']}' WHERE id='{data['id']}'") 
         if self.cur.rowcount > 0:
             # return {"message":'User Updated Successfully'}
-            return make_response({"message":'New Data Added'}, 201)
+            return make_response({"message":'Data Updated'}, 201)
         
         # return {"message":'No changes made!'} 
+        return make_response({"message": 'No changes made!'}, 202)#202- Accepted but nothing to process
+    
+    def user_patch(self, data , id):
+        query = "UPDATE uses SET "
+        print(data)
+        for key in data:
+            query = query + f"{key} = '{data[key]}',"        
+        query = query[:-1] + f" WHERE id={id}"
+
+        self.cur.execute(query)
+        if self.cur.rowcount > 0:
+            return make_response({"message":'Data Updated'}, 201)
         return make_response({"message": 'No changes made!'}, 202)#202- Accepted but nothing to process
         
     def user_delete(self, id):
