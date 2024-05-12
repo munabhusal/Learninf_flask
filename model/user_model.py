@@ -74,3 +74,16 @@ class user_model():
             return make_response({"message":'User Deleted Successfully'}, 200)
         # return {"message":'No data Deleted!'} 
         return make_response({"message": 'No data Deleted!'}, 202)
+    
+    def user_pagination(self, limit, page):
+        page = int(page)
+        limit = int(limit)
+        start = (page*limit)-limit
+
+        self.cur.execute(f"SELECT * FROM uses LIMIT {start},{limit}")
+        result = self.cur.fetchall()
+
+        if len(result) > 0:
+            return make_response({"payload":result, "page":page , 'limit':limit}, 200)
+        
+        return make_response({"message": 'No data Found!'}, 202)

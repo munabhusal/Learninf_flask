@@ -24,3 +24,7 @@ def user_update_patch_controller(id):
 @app.route('/user/delete/<id>', methods = ['DELETE'])
 def user_delete_controller(id):
     return object.user_delete(id)
+
+@app.route('/user/getall/limit/<limit>/page/<page>', methods = ['GET'])
+def user_pagination_controller(limit, page):
+    return object.user_pagination(limit , page)
