@@ -1,6 +1,7 @@
 from app import app
 from model.user_model import user_model
-from flask import request
+from flask import request, send_file
+from datetime import datetime
 
 object = user_model()
 
@@ -28,3 +29,23 @@ def user_delete_controller(id):
 @app.route('/user/getall/limit/<limit>/page/<page>', methods = ['GET'])
 def user_pagination_controller(limit, page):
     return object.user_pagination(limit , page)
+
+@app.route('/user/create/avatar/<id>', methods = ['PUT'])
+def user_create_avatar_controller(id):
+    avatar = request.files['avatar']
+
+    # Saving Avatar with its original name
+    # avatar.save(f"avatars/{avatar.filename}")
+
+    #Saving Avatar with diffrent name - name will be generated with respect to the current time
+    unique_filename = str(datetime.now().timestamp()).replace(".", "")
+    ext = avatar.filename.split('.')[-1]
+    file_path ='avatars/'+unique_filename+'.'+ext    
+    avatar.save(f"{file_path}")
+
+    return object.create_avatar(id, file_path)
+
+
+@app.route('/avatars/<filename>', methods = ['GET'])
+def user_get_avatar_controller(filename):
+    return send_file(f"avatars/{filename}")

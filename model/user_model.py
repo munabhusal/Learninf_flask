@@ -87,3 +87,9 @@ class user_model():
             return make_response({"payload":result, "page":page , 'limit':limit}, 200)
         
         return make_response({"message": 'No data Found!'}, 202)
+
+    def create_avatar(self, id, path):
+        self.cur.execute(f"UPDATE uses SET avatar='{path}' WHERE id='{id}'") 
+        if self.cur.rowcount > 0:
+            return make_response({"message":'User Avatar Updated Successfully'}, 200)
+        return make_response({"message": 'Nothing has been changed!!'}, 202)
