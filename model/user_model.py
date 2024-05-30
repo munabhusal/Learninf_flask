@@ -3,16 +3,17 @@ import json
 import jwt
 from flask import make_response
 from datetime import datetime, timedelta
+from config.config import db_config
 
 class user_model():
     def __init__(self):
         #connection establishment
         try:
             self.conn = mysql.connector.connect(
-                host = "localhost",
-                user = "root", 
-                password = "",
-                database = "learning_flask")
+                host = db_config['host'],
+                user = db_config['user'], 
+                password = db_config['password'],
+                database = db_config['database'])
             
             self.cur = self.conn.cursor(dictionary = True)
 
@@ -43,14 +44,25 @@ class user_model():
     
         
     def user_addone(self, data):
-        self.cur.execute(f"INSERT INTO uses(name,email,phone,password) VALUES ('{data['name']}','{data['email']}','{data['phone']}','{data['password']}')")
+        self.cur.execute(f"INSERT INTO uses(role_id, name,email,phone,password) VALUES ('{data['role_id']}','{data['name']}','{data['email']}','{data['phone']}','{data['password']}')")
         # return {"message":'New Data Added'}
         return make_response({"message":'New Data Added'}, 201) #201 for created
-        
+    
+    def user_addmultiple(self, data):
+        query = "INSERT INTO uses(role_id, name,email,phone,password) VALUES"
+        print(query)
+        for userdata in data:
+            query += f"('{userdata['role_id']}','{userdata['name']}','{userdata['email']}','{userdata['phone']}','{userdata['password']}'),"
+        final =  query.rstrip(',')
+        self.cur.execute(final)
+        return make_response({"message":'Multiple User Created Successflly!!'}, 201)
+    
+
     def user_update(self, data):
-        self.cur.execute(f"UPDATE uses SET name= '{data['name']}' , email='{data['email']}' , phone='{data['phone']}' ,password='{data['password']}' WHERE id='{data['id']}'") 
+        self.cur.execute(f"UPDATE uses SET role_id= '{data['role_id']}' ,name= '{data['name']}' , email='{data['email']}' , phone='{data['phone']}' ,password='{data['password']}' WHERE id='{data['id']}'") 
         if self.cur.rowcount > 0:
             # return {"message":'User Updated Successfully'}
+
             return make_response({"message":'Data Updated'}, 201)
         
         # return {"message":'No changes made!'} 

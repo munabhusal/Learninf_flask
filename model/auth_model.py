@@ -5,15 +5,17 @@ import re
 from flask import make_response, request
 from functools import wraps
 
+from config.config import db_config
+
 class auth_model():
     def __init__(self):
         #connection establishment
         try:
             self.conn = mysql.connector.connect(
-                host = "localhost",
-                user = "root", 
-                password = "",
-                database = "learning_flask")
+                host = db_config['host'],
+                user = db_config['user'], 
+                password = db_config['password'],
+                database = db_config['database'])
             
             self.cur = self.conn.cursor(dictionary = True)
             self.conn.autocommit= True            
@@ -23,10 +25,12 @@ class auth_model():
 
 
 
-    def token_auth(self, endpoint):
+    def token_auth(self, endpoint=''):
         def inner1(func):
             @wraps(func)
             def inner2(*args):
+                endpoint = request.url_rule
+                print(endpoint)
                 authorization_val = (request.headers.get('Authorization'))
                 if re.match('^Bearer *([^ ]+) *$', authorization_val, flags=0):
                     token = authorization_val.split(' ')[1]        
