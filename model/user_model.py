@@ -1,6 +1,8 @@
 import mysql.connector 
 import json
+import jwt
 from flask import make_response
+from datetime import datetime, timedelta
 
 class user_model():
     def __init__(self):
@@ -41,12 +43,12 @@ class user_model():
     
         
     def user_addone(self, data):
-        self.cur.execute(f"INSERT INTO uses(name,email,phone,role,password) VALUES ('{data['name']}','{data['email']}','{data['phone']}','{data['role']}','{data['password']}')")
+        self.cur.execute(f"INSERT INTO uses(name,email,phone,password) VALUES ('{data['name']}','{data['email']}','{data['phone']}','{data['password']}')")
         # return {"message":'New Data Added'}
         return make_response({"message":'New Data Added'}, 201) #201 for created
         
     def user_update(self, data):
-        self.cur.execute(f"UPDATE uses SET name= '{data['name']}' , email='{data['email']}' , phone='{data['phone']}', role='{data['role']}' ,password='{data['password']}' WHERE id='{data['id']}'") 
+        self.cur.execute(f"UPDATE uses SET name= '{data['name']}' , email='{data['email']}' , phone='{data['phone']}' ,password='{data['password']}' WHERE id='{data['id']}'") 
         if self.cur.rowcount > 0:
             # return {"message":'User Updated Successfully'}
             return make_response({"message":'Data Updated'}, 201)
@@ -93,3 +95,14 @@ class user_model():
         if self.cur.rowcount > 0:
             return make_response({"message":'User Avatar Updated Successfully'}, 200)
         return make_response({"message": 'Nothing has been changed!!'}, 202)
+    
+    def user_login_model(self, data):
+        self.cur.execute(f"SELECT id,name,email, phone, role_id FROM uses WHERE email = '{data['email']}' and password = '{data['password']}' ")
+        userdata = self.cur.fetchall()[0]
+        exp_time = int((datetime.now()+ timedelta(minutes = 15)).timestamp())
+        payload = {
+            'payload':userdata,
+            'exp': exp_time
+            }
+        token = jwt.encode(payload, 'thisisthekey', algorithm = 'HS256')
+        return make_response({'token': token}, 200)

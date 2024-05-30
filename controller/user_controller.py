@@ -1,19 +1,25 @@
 from app import app
 from model.user_model import user_model
+from model.auth_model import auth_model
+
 from flask import request, send_file
 from datetime import datetime
 
 object = user_model()
+auth = auth_model()
 
 @app.route('/user/getall')
+@auth.token_auth('/user/getall')
 def user_getall_controller():
     return object.user_get_all()
 
 @app.route('/user/addone', methods = ['POST'])
+@auth.token_auth('/user/addone')
 def user_addone_controller():
     return object.user_addone(request.form)
 
 @app.route('/user/update', methods = ['PUT'])
+@auth.token_auth('/user/update')
 def user_update_controller():
     # print(request.form)
     return object.user_update(request.form)
@@ -49,3 +55,9 @@ def user_create_avatar_controller(id):
 @app.route('/avatars/<filename>', methods = ['GET'])
 def user_get_avatar_controller(filename):
     return send_file(f"avatars/{filename}")
+
+@app.route('/user/login/', methods = ['POST'])
+def user_login_controller():
+    # user_login_model
+    # request.form
+    return object.user_login_model(request.form)
