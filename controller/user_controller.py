@@ -9,22 +9,27 @@ object = user_model()
 auth = auth_model()
 
 @app.route('/user/getall')
-@auth.token_auth('/user/getall')
+# @auth.token_auth()
 def user_getall_controller():
     return object.user_get_all()
 
 @app.route('/user/addone', methods = ['POST'])
-@auth.token_auth('/user/addone')
+# @auth.token_auth()
 def user_addone_controller():
     return object.user_addone(request.form)
 
+@app.route('/user/addmultiple', methods = ['POST'])
+def user_addmultiple_controller():
+    return object.user_addmultiple(request.json)
+
 @app.route('/user/update', methods = ['PUT'])
-@auth.token_auth('/user/update')
+@auth.token_auth()
 def user_update_controller():
     # print(request.form)
     return object.user_update(request.form)
 
 @app.route('/user/update/patch/<id>', methods = ['PATCH'])
+# @auth.token_auth()
 def user_update_patch_controller(id):
     return object.user_patch(request.form , id)
 
@@ -58,6 +63,4 @@ def user_get_avatar_controller(filename):
 
 @app.route('/user/login/', methods = ['POST'])
 def user_login_controller():
-    # user_login_model
-    # request.form
     return object.user_login_model(request.form)
