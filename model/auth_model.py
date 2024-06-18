@@ -21,7 +21,7 @@ class auth_model():
             self.conn.autocommit= True            
             print('Connection Established!')
         except:
-            print('Some Error')
+            print('Some Error While Connecting the Database')
 
 
 
