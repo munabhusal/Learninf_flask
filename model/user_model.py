@@ -21,7 +21,7 @@ class user_model():
             
             print('Connection Established!')
         except:
-            print('Some Error')
+            print('Some Error While Connecting the Database')
 
 
     def user_get_all(self):
